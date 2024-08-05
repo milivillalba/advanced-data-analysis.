@@ -1,4 +1,4 @@
-id,employee_id,departament,performance_score,years_with_company,salary
+id,employee_id,department,performance_score,years_with_company,salary
 162,156,nunc nisl duis,94,37,90
 735,960,eget tincidunt,779,56,46
 153,177,amet,842,79,65
