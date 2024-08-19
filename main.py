@@ -54,7 +54,7 @@ class BaseDatos:
        self.cursor.close()
        self.connection.close()
 
-
+#
 #clase para manejar las operaciones relacionadas con la tabla.
 
 class EmployeePerformance:
