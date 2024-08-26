@@ -1,6 +1,7 @@
 import mysql.connector
-
 import pandas as pd
+import matplotlib.pyplot as plt
+
 
 #clase para gestionar la conexion y las consultas a la base de datos.
 
@@ -95,7 +96,62 @@ class EmployeePerformance:
                 row['years_with_company'],
                 row['salary']
             ))
-   
+
+    def analizar_datos(self):
+        # Consulta todos los datos de la tabla EmployeePerformance
+        query = f"SELECT * FROM {self.nombre_tabla}"
+        df = pd.read_sql(query, self.db.connection)
+
+        # Análisis de datos por departamento
+        departamentos = df['department'].unique()
+
+        for dept in departamentos:
+            print(f"\nEstadísticas para el departamento: {dept}")
+            dept_data = df[df['department'] == dept]
+
+            # Media, mediana y desviación estándar del performance_score
+            print("Performance Score:")
+            print(f"Media: {dept_data['performance_score'].mean()}")
+            print(f"Mediana: {dept_data['performance_score'].median()}")
+            print(f"Desviación Estándar: {dept_data['performance_score'].std()}")
+
+            # Media, mediana y desviación estándar del salary
+            print("\nSalary:")
+            print(f"Media: {dept_data['salary'].mean()}")
+            print(f"Mediana: {dept_data['salary'].median()}")
+            print(f"Desviación Estándar: {dept_data['salary'].std()}")
+
+            # Número total de empleados por departamento
+            print(f"\nNúmero total de empleados: {dept_data['employee_id'].count()}")
+
+            # Correlación entre years_with_company y performance_score
+            print(f"\nCorrelación entre Years with Company y Performance Score: {dept_data['years_with_company'].corr(dept_data['performance_score'])}")
+
+            # Correlación entre salary y performance_score
+            print(f"Correlación entre Salary y Performance Score: {dept_data['salary'].corr(dept_data['performance_score'])}")
+
+            # Visualización de los datos
+            plt.figure()
+            plt.hist(dept_data['performance_score'], bins=10, alpha=0.7, color='blue')
+            plt.title(f'Histograma del Performance Score - {dept}')
+            plt.xlabel('Performance Score')
+            plt.ylabel('Frecuencia')
+            plt.show()
+
+            plt.figure()
+            plt.scatter(dept_data['years_with_company'], dept_data['performance_score'], alpha=0.7)
+            plt.title(f'Years with Company vs Performance Score - {dept}')
+            plt.xlabel('Years with Company')
+            plt.ylabel('Performance Score')
+            plt.show()
+
+            plt.figure()
+            plt.scatter(dept_data['salary'], dept_data['performance_score'], alpha=0.7)
+            plt.title(f'Salary vs Performance Score - {dept}')
+            plt.xlabel('Salary')
+            plt.ylabel('Performance Score')
+            plt.show()
+
  # Ejecuta la secuencia principal:
 #  conectar a la base de datos, crear la tabla, leer e insertar datos, y cerrar la conexión.
 if __name__== "__main__":
@@ -113,10 +169,9 @@ if __name__== "__main__":
 
     # Insertar los datos en la tabla
     employee_performance.insertar_datos(df)
+    # Realizar análisis de datos por departamento
+    employee_performance.analizar_datos()
 
     # Cerrar la conexión a la base de datos
     db.close()
-#Leer los datos ficticios de el archivo CSV
-
-df= pd.read_csv('DatosTabla.csv')
 
